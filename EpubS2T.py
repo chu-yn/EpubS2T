@@ -29,7 +29,6 @@ def zip(path):
             lists.append(os.path.join(root, name))
 
     for file in lists:
-        print(file)
         zf.write(file)
 
     shutil.rmtree(path)
