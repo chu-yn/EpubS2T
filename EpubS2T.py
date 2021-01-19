@@ -23,9 +23,16 @@ def mkdir(path):
 
 def zip(path):
     zf = zipfile.ZipFile('{}.epub'.format(path), 'w', zipfile.ZIP_DEFLATED)
+    lists = []
     for root, dirs, files in os.walk(path):
         for name in files:
-            zf.write(os.path.join(root, name))
+            lists.append(os.path.join(root, name))
+
+    for file in lists:
+        print(file)
+        zf.write(file)
+
+    shutil.rmtree(path)
 
 
 def unzip(path, epub_path):
@@ -49,8 +56,12 @@ def CN_to_TW(path):
                 file.close()
 
 
-unzip(path, epub_path)
-os.chdir(path)  # change address
-CN_to_TW(path)
-zip(path)
-shutil.rmtree(path)
+def main():
+    unzip(path, epub_path)
+    os.chdir(path)  # change address
+    CN_to_TW(path)
+    zip(path)
+
+
+if __name__ == '__main__':
+    main()
