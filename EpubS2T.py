@@ -1,4 +1,5 @@
 import os
+import shutil
 import zipfile
 import ebooklib
 from ebooklib import epub
@@ -21,11 +22,10 @@ def mkdir(path):
 
 
 def zip(path):
-    zf = zipfile.ZipFile('{}.zip'.format(path), 'w', zipfile.ZIP_DEFLATED)
-
+    zf = zipfile.ZipFile('{}.epub'.format(path), 'w', zipfile.ZIP_DEFLATED)
     for root, dirs, files in os.walk(path):
-        for file_name in files:
-            zf.write(os.path.join(root, file_name))
+        for name in files:
+            zf.write(os.path.join(root, name))
 
 
 def unzip(path, epub_path):
@@ -39,7 +39,8 @@ def CN_to_TW(path):
     for root, dirs, files in os.walk(path, topdown=True):
         for name in files:
             if name.endswith(".html"):
-                file = open(os.path.join(root, name), 'r+')  # create new html file
+                # create new html file
+                file = open(os.path.join(root, name), 'r+')
                 text = file.read()
                 file.close()
                 text = cc.convert(text)
@@ -52,3 +53,4 @@ unzip(path, epub_path)
 os.chdir(path)  # change address
 CN_to_TW(path)
 zip(path)
+shutil.rmtree(path)
