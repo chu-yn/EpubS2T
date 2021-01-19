@@ -22,8 +22,7 @@ def mkdir(path):
 
 def html(path, name, text):
     os.chdir(path)  # change address
-    create = name + '.html'  # create new html file
-    file = open(create, 'w')
+    file = open(name, 'w')  # create new html file
     file.write(text)  # write in content
     file.close()
 
@@ -33,7 +32,7 @@ def epubTohtml(epub_path, path):
     book = epub.read_epub(epub_path)
     for item in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
         converted = cc.convert(item.get_content())
-        html(path, item.get_name(), converted)
+        html(path+'/OEBPS', item.get_name(), converted)
 
 
 epubTohtml(epub_path, path)
