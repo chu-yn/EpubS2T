@@ -1,5 +1,8 @@
-import ebooklib
 import os
+from posixpath import join
+from typing import Text
+import zipfile
+import ebooklib
 from ebooklib import epub
 from opencc import OpenCC
 cc = OpenCC('s2t')
@@ -20,19 +23,34 @@ def mkdir(path):
         print(path+' 目錄已存在')
 
 
-def html(path, name, text):
-    os.chdir(path)  # change address
-    file = open(name, 'w')  # create new html file
-    file.write(text)  # write in content
-    file.close()
+def zip(path):
+    zf = zipfile.ZipFile('{}.zip'.format(path), 'w', zipfile.ZIP_DEFLATED)
+
+    for root, dirs, files in os.walk(path):
+        for file_name in files:
+            zf.write(os.path.join(root, file_name))
+
+
+def unzip(path, epub_path):
+    mkdir(path)
+    os.chdir(path)
+    zf = zipfile.ZipFile(epub_path, 'r')
+    zf.extractall()
 
 
 def epubTohtml(epub_path, path):
-    mkdir(path)
-    book = epub.read_epub(epub_path)
-    for item in book.get_items_of_type(ebooklib.ITEM_DOCUMENT):
-        converted = cc.convert(item.get_content())
-        html(path+'/OEBPS', item.get_name(), converted)
+    unzip(path, epub_path)
+    os.chdir(path)  # change address
+    for root, dirs, files in os.walk(path, topdown=True):
+        for name in files:
+            if name.endswith(".html"):
+                file = open(join(root, name), 'r+')  # create new html file
+                text = file.read()
+                file.close()
+                text = cc.convert(text)
+                file = open(join(root, name), 'w')
+                file.write(text)  # write in content
+                file.close()
 
 
 epubTohtml(epub_path, path)
