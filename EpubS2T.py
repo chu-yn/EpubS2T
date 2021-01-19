@@ -1,6 +1,4 @@
 import os
-from posixpath import join
-from typing import Text
 import zipfile
 import ebooklib
 from ebooklib import epub
@@ -17,7 +15,6 @@ def mkdir(path):
         # 如果不存在，則建立新目錄
         os.makedirs(path)
         print('-----建立成功-----')
-
     else:
         # 如果目錄已存在，則不建立，提示目錄已存在
         print(path+' 目錄已存在')
@@ -38,19 +35,20 @@ def unzip(path, epub_path):
     zf.extractall()
 
 
-def epubTohtml(epub_path, path):
-    unzip(path, epub_path)
-    os.chdir(path)  # change address
+def CN_to_TW(path):
     for root, dirs, files in os.walk(path, topdown=True):
         for name in files:
             if name.endswith(".html"):
-                file = open(join(root, name), 'r+')  # create new html file
+                file = open(os.path.join(root, name), 'r+')  # create new html file
                 text = file.read()
                 file.close()
                 text = cc.convert(text)
-                file = open(join(root, name), 'w')
+                file = open(os.path.join(root, name), 'w')
                 file.write(text)  # write in content
                 file.close()
 
 
-epubTohtml(epub_path, path)
+unzip(path, epub_path)
+os.chdir(path)  # change address
+CN_to_TW(path)
+zip(path)
