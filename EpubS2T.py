@@ -1,8 +1,6 @@
 import os
 import shutil
 import zipfile
-import ebooklib
-from ebooklib import epub
 from opencc import OpenCC
 cc = OpenCC('s2t')
 epub_path = '/Users/chunyen/Downloads/投资最重要的事(全新升级版).epub'
@@ -22,16 +20,20 @@ def mkdir(path):
 
 
 def zip(path):
-    zf = zipfile.ZipFile('{}.epub'.format(path), 'w', zipfile.ZIP_DEFLATED)
-    lists = []
-    for root, dirs, files in os.walk(path):
-        for name in files:
-            lists.append(os.path.join(root, name))
-
-    for file in lists:
-        zf.write(file)
-
-    shutil.rmtree(path)
+    filelist = []
+    isdir = True
+    if os.path.isfile(path):
+        filelist.append(path)
+        isdir = False
+    else:
+        for root, dirs, files in os.walk(path):
+            for name in files:
+                filelist.append(os.path.join(root, name))
+    zf = zipfile.ZipFile('{}.epub'.format(path), "w", zipfile.zlib.DEFLATED)
+    for tar in filelist:
+        arcname = tar[len(path):] if isdir else os.path.basename(path)
+        zf.write(tar, arcname)
+    zf.close()
 
 
 def unzip(path, epub_path):
@@ -60,6 +62,7 @@ def main():
     os.chdir(path)  # change address
     CN_to_TW(path)
     zip(path)
+    shutil.rmtree(path)
 
 
 if __name__ == '__main__':
