@@ -98,6 +98,7 @@ def main():
             sys.exit()
 
     cc = OpenCC(lang)
+    print('Mode: ' + lang)
     converter(epub_path, cc)
     sys.exit()
 
