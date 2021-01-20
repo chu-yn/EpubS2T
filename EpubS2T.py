@@ -61,7 +61,7 @@ def lang_trans(path, cc):
     print('Processing...')
     for root, dirs, files in os.walk(path, topdown=True):
         for name in files:
-            if name.endswith(".html"):
+            if name.endswith(".html") or name.endswith(".xhtml") or name.endswith(".opf"):
                 with open(os.path.join(root, name), 'r+') as file:
                     text = file.read()
                 text = cc.convert(text)
@@ -87,7 +87,7 @@ def usage():
 
 def main():
     opts, args = getopt.getopt(sys.argv[1:], "hi:l:", ['input', 'lang'])
-    epub_path = ''
+    epub_path = '/Users/chunyen/Downloads/区块链：通往资产数字化之路.epub'
     lang = 's2t'
     for op, value in opts:
         if op == '-i':
