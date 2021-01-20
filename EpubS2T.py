@@ -87,7 +87,7 @@ def usage():
 
 def main():
     opts, args = getopt.getopt(sys.argv[1:], "hi:l:", ['input', 'lang'])
-    epub_path = '/Users/chunyen/Downloads/区块链：通往资产数字化之路.epub'
+    epub_path = ''
     lang = 's2t'
     for op, value in opts:
         if op == '-i':
