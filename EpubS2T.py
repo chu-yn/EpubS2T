@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import getopt
 import shutil
 import zipfile
@@ -99,7 +100,10 @@ def main():
 
     cc = OpenCC(lang)
     print('Mode: ' + lang)
+    start = time.perf_counter()
     converter(epub_path, cc)
+    end = time.perf_counter()
+    print(f'Time: {end - start}s')
     sys.exit()
 
 
