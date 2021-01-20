@@ -1,12 +1,16 @@
 import os
+import sys
+import getopt
 import shutil
 import zipfile
 from opencc import OpenCC
-cc = OpenCC('s2t')
-epub_path = '/Users/chunyen/Downloads/投资最重要的事(全新升级版).epub'
 
 
-def get_file_name(epub_path):
+def get_file_name(epub_path, cc):
+    if epub_path == '':
+        print('File not found')
+        sys.exit()
+
     (address, file) = os.path.split(epub_path)
     (filename, ext) = os.path.splitext(file)
     print('File address: ' + os.path.abspath(epub_path))
@@ -52,7 +56,7 @@ def unzip(path, epub_path):
         zf.extractall()
 
 
-def CN_to_TW(path):
+def lang_trans(path, cc):
     print('Processing...')
     for root, dirs, files in os.walk(path, topdown=True):
         for name in files:
@@ -64,14 +68,38 @@ def CN_to_TW(path):
                     file.write(text)
 
 
-def main():
-    path = get_file_name(epub_path)  # grnerate temp file path
+def converter(epub_path, cc):
+    path = get_file_name(epub_path, cc)  # grnerate temp file path
     unzip(path, epub_path)  # Unzip epub file
     os.chdir(path)  # Change path
-    CN_to_TW(path)  # Translate zh_CN to zh_TW with OpenCC
+    lang_trans(path, cc)  # Translate zh_CN to zh_TW with OpenCC
     zip(path)  # Pack epub file
     shutil.rmtree(path)  # Delete temp files
     print('Sucessful')
+
+
+def usage():
+    print('-i (input) path of input file')
+    print('-l (lang) language need to translate')
+    print('\twhich s2t is default')
+
+
+def main():
+    opts, args = getopt.getopt(sys.argv[1:], "hi:l:", ['input', 'lang'])
+    epub_path = ''
+    lang = 's2t'
+    for op, value in opts:
+        if op == '-i':
+            epub_path = value
+        elif op == '-l':
+            lang = value
+        elif op == "-h":
+            usage()
+            sys.exit()
+
+    cc = OpenCC(lang)
+    converter(epub_path, cc)
+    sys.exit()
 
 
 if __name__ == '__main__':
