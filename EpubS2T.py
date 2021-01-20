@@ -13,13 +13,14 @@ def mkdir(path):
     if not folder:
         # 如果不存在，則建立新目錄
         os.makedirs(path)
-        print('-----建立成功-----')
+        print('Temp File Create Successful')
     else:
         # 如果目錄已存在，則不建立，提示目錄已存在
-        print(path+' 目錄已存在')
+        print(path+' Temp File Existed')
 
 
 def zip(path):
+    print('Packing Epub File')
     filelist = []
     isdir = True
     if os.path.isfile(path):
@@ -29,40 +30,37 @@ def zip(path):
         for root, dirs, files in os.walk(path):
             for name in files:
                 filelist.append(os.path.join(root, name))
-    zf = zipfile.ZipFile('{}.epub'.format(path), "w", zipfile.zlib.DEFLATED)
-    for tar in filelist:
-        arcname = tar[len(path):] if isdir else os.path.basename(path)
-        zf.write(tar, arcname)
-    zf.close()
+    with zipfile.ZipFile('{}.epub'.format(path), "w", zipfile.zlib.DEFLATED) as zf:
+        for tar in filelist:
+            arcname = tar[len(path):] if isdir else os.path.basename(path)
+            zf.write(tar, arcname)
 
 
 def unzip(path, epub_path):
     mkdir(path)
     os.chdir(path)
-    zf = zipfile.ZipFile(epub_path, 'r')
-    zf.extractall()
+    with zipfile.ZipFile(epub_path, 'r') as zf:
+        zf.extractall()
 
 
 def CN_to_TW(path):
+    print('Processing...')
     for root, dirs, files in os.walk(path, topdown=True):
         for name in files:
             if name.endswith(".html"):
-                # create new html file
-                file = open(os.path.join(root, name), 'r+')
-                text = file.read()
-                file.close()
+                with open(os.path.join(root, name), 'r+') as file:
+                    text = file.read()
                 text = cc.convert(text)
-                file = open(os.path.join(root, name), 'w')
-                file.write(text)  # write in content
-                file.close()
+                with open(os.path.join(root, name), 'w') as file:
+                    file.write(text)
 
 
 def main():
-    unzip(path, epub_path)
-    os.chdir(path)  # change address
-    CN_to_TW(path)
-    zip(path)
-    shutil.rmtree(path)
+    unzip(path, epub_path)  # Unzip epub file
+    os.chdir(path)  # Change address
+    CN_to_TW(path)  # Translate zh_CN to zh_TW with OpenCC
+    zip(path)  # Pack epub file
+    shutil.rmtree(path)  # Delete temp files
 
 
 if __name__ == '__main__':
