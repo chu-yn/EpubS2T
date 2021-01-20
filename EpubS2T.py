@@ -4,7 +4,16 @@ import zipfile
 from opencc import OpenCC
 cc = OpenCC('s2t')
 epub_path = '/Users/chunyen/Downloads/投资最重要的事(全新升级版).epub'
-path = '/Users/chunyen/Downloads/convert'
+
+
+def get_file_name(epub_path):
+    (address, file) = os.path.split(epub_path)
+    (filename, ext) = os.path.splitext(file)
+    print('File address: ' + os.path.abspath(epub_path))
+    filename = cc.convert(filename)
+    path = os.path.abspath(os.path.join(address, filename + '_converted'))
+    print('Temp file: ' + path)
+    return path
 
 
 def mkdir(path):
@@ -56,11 +65,13 @@ def CN_to_TW(path):
 
 
 def main():
+    path = get_file_name(epub_path)  # grnerate temp file path
     unzip(path, epub_path)  # Unzip epub file
-    os.chdir(path)  # Change address
+    os.chdir(path)  # Change path
     CN_to_TW(path)  # Translate zh_CN to zh_TW with OpenCC
     zip(path)  # Pack epub file
     shutil.rmtree(path)  # Delete temp files
+    print('Sucessful')
 
 
 if __name__ == '__main__':
