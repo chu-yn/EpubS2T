@@ -4,7 +4,7 @@ import time
 import getopt
 import shutil
 import zipfile
-from opencc import OpenCC
+from opencc.opencc import OpenCC
 
 
 def get_file_name(epub_path, cc):
