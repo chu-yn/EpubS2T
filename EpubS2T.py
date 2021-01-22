@@ -61,7 +61,8 @@ def lang_trans(path, cc):
     print('Processing...')
     for root, dirs, files in os.walk(path, topdown=True):
         for name in files:
-            if name.endswith(".html") or name.endswith(".xhtml") or name.endswith(".opf") or name.endswith(".ncx"):
+            if name.endswith(".html") or name.endswith(".xhtml") \
+                    or name.endswith(".opf") or name.endswith(".ncx"):
                 with open(os.path.join(root, name), 'r+') as file:
                     text = file.read()
                 text = cc.convert(text)
