@@ -107,7 +107,7 @@ def main():
         epub_path = filedialog.askopenfilename(parent=root,
                                                initialdir='~/',
                                                title='Select file',
-                                               filetypes=(("epub files", "*.epub"), ("all files", "*.*")))
+                                               filetypes=[("epub files", "*.epub")])
 
         if not epub_path:
             print('file path is empty')
