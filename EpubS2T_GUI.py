@@ -6,6 +6,7 @@ import shutil
 import zipfile
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import ttk, messagebox
 from opencc.opencc import OpenCC
 
 
@@ -82,37 +83,37 @@ def converter(epub_path, cc):
     print('Sucessful')
 
 
-def usage():
-    print('-i (input) path of input file')
-    print('-l (lang) language need to translate')
-    print('\twhich s2t is default')
-
-
 def main():
-    opts, args = getopt.getopt(sys.argv[1:], "hi:l:", ['input', 'lang'])
-    epub_path = ''
-    lang = 's2t'
-    for op, value in opts:
-        if op == '-i':
-            epub_path = value
-        elif op == '-l':
-            lang = value
-        elif op == "-h":
-            usage()
-            sys.exit()
+    window = tk.Tk()
+    window.title('EpubS2T')
+    window.geometry('800x600')
+    epub_path = tk.StringVar()
+    lang = tk.StringVar()
+    header_label = tk.Label(window, text='簡繁轉換', font=('Arial', 24))
+    header_label.grid(row=0, column=0)
+    tk.Label(window, text='File', font=('Arial', 16)).grid(row=1, column=0)
+    entry = tk.Entry(window, textvariable=epub_path)
+    entry.grid(row=1, column=1)
 
-    if epub_path == '':
-        root = tk.Tk()
-        root.withdraw()
-        epub_path = filedialog.askopenfilename(parent=root,
-                                               initialdir='~/',
-                                               title='Select file',
-                                               filetypes=[("epub files", "*.epub")])
+    def browsefunc():
+        filename = filedialog.askopenfilename(initialdir='~/',
+                                              title='Select file',
+                                              filetypes=[("epub files", "*.epub")])
+        epub_path.set(filename)
 
-        if not epub_path:
-            print('file path is empty')
-            sys.exit()
+    tk.Button(window, text="Browse", command=browsefunc).grid(row=1, column=2)
 
+    tk.Label(window, text='Mode:', font=('Arial', 16)).grid(row=2, column=0)
+    cb = ttk.Combobox(window, textvariable=lang)
+    cb.grid(row=2, column=1)
+    cb['values'] = ['s2t', 's2tw', 't2s']
+
+    tk.Button(window, text="Convert", command=converter).grid(row=3, column=1)
+
+    if not epub_path:
+        print('file path is empty')
+        sys.exit()
+    '''
     cc = OpenCC(lang)
     print('Mode: ' + lang)
     start = time.perf_counter()
@@ -120,6 +121,8 @@ def main():
     end = time.perf_counter()
     print(f'Time: {end - start}s')
     sys.exit()
+    '''
+    window.mainloop()
 
 
 if __name__ == '__main__':
