@@ -75,41 +75,55 @@ def converter(epub_path, lang):
         messagebox.showinfo(message='Sucessful')
 
 
-def main():
-    window = tk.Tk()
-    window.title('EpubS2T')
-    window.geometry('400x300')
-    epub_path = tk.StringVar()
-    lang = tk.StringVar()
+class UI:
+    def __init__(self):
+        # main UI
+        self.window = tk.Tk()
+        self.window.title('EpubS2T')
+        self.window.geometry('400x300')
+        self.epub_path = tk.StringVar()
+        self.lang = tk.StringVar()
 
-    # title UI
-    header_label = tk.Label(window, text='簡繁轉換', font=('Arial', 24))
-    header_label.grid(row=0, column=0)
+        # title UI
+        header_label = tk.Label(self.window, text='語言轉換', font=('Arial', 24))
+        header_label.grid(row=0, column=0)
 
-    # path choosed UI
-    tk.Label(window, text='File').grid(row=1, column=0)
-    entry_path = tk.Entry(window, textvariable=epub_path)
-    entry_path.grid(row=1, column=1)
+        # path choosed UI
+        tk.Label(self.window, text='File').grid(row=1, column=0)
+        entry_path = tk.Entry(self.window, textvariable=self.epub_path)
+        entry_path.grid(row=1, column=1)
+        tk.Button(self.window, text="Browse",
+                  command=self.browsefunc).grid(row=1, column=2)
 
-    def browsefunc():
+        # mode chose UI
+        tk.Label(self.window, text='Mode').grid(row=2, column=0)
+        lang_entry = ttk.Combobox(self.window, textvariable=self.lang)
+        lang_entry.grid(row=2, column=1)
+        lang_entry['values'] = ['s2t', 's2tw', 't2s', 't2tw']
+
+        # convert UI
+        tk.Button(self.window, text="Convert", command=lambda: converter(
+            self.epub_path.get(), self.lang.get())).grid(row=3, column=1)
+
+        # quit UI
+        tk.Button(self.window, text='Quit', command=quit).grid(row=4, column=1)
+
+        self.window.mainloop()
+
+    # browse function
+    def browsefunc(self):
         filename = filedialog.askopenfilename(initialdir='~/',
                                               title='Select file',
                                               filetypes=[("epub files", "*.epub")])
-        epub_path.set(filename)
+        self.epub_path.set(filename)
 
-    tk.Button(window, text="Browse", command=browsefunc).grid(row=1, column=2)
+    # quit function
+    def quitfunc(self):
+        self.window.destroy()
 
-    # mode chose UI
-    tk.Label(window, text='Mode').grid(row=2, column=0)
-    lang_entry = ttk.Combobox(window, textvariable=lang)
-    lang_entry.grid(row=2, column=1)
-    lang_entry['values'] = ['s2t', 's2tw', 't2s', 't2tw']
 
-    # convert UI
-    tk.Button(window, text="Convert", command=lambda: converter(
-        epub_path.get(), lang.get())).grid(row=3, column=1)
-
-    window.mainloop()
+def main():
+    app = UI()
 
 
 if __name__ == '__main__':
