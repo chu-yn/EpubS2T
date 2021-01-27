@@ -81,7 +81,7 @@ class UI:
         self.window.config(menu=menubar)
 
         # title UI
-        header_label = tk.Label(self.window, text='語言轉換', font=('Arial', 24))
+        header_label = tk.Label(self.window, text='語言轉換', font=('Arial', 16))
         header_label.grid(row=0, column=0)
 
         # path choosed UI
@@ -136,7 +136,7 @@ class UI:
         self.increment(prog, 30)
         zip(path)  # Pack epub file
         self.increment(prog, 30)
-        shutil.rmtree(path)  # Delete temp files
+        shutil.rmtree(path, ignore_errors=True)  # Delete temp files
         self.increment(prog, 10)
 
     # progress function
