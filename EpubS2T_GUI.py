@@ -94,7 +94,7 @@ def main():
     lang = tk.StringVar()
     header_label = tk.Label(window, text='簡繁轉換', font=('Arial', 24))
     header_label.grid(row=0, column=0)
-    tk.Label(window, text='File', font=('Arial', 14)).grid(row=1, column=0)
+    tk.Label(window, text='File').grid(row=1, column=0)
     entry_path = tk.Entry(window, textvariable=epub_path)
     entry_path.grid(row=1, column=1)
 
@@ -106,7 +106,7 @@ def main():
 
     tk.Button(window, text="Browse", command=browsefunc).grid(row=1, column=2)
 
-    tk.Label(window, text='Mode', font=('Arial', 14)).grid(row=2, column=0)
+    tk.Label(window, text='Mode').grid(row=2, column=0)
     lang_entry = ttk.Combobox(window, textvariable=lang)
     lang_entry.grid(row=2, column=1)
     lang_entry['values'] = ['s2t', 's2tw', 't2s', 't2tw']
