@@ -59,22 +59,6 @@ def lang_trans(path, cc):
                     file.write(text)
 
 
-def converter(epub_path, lang):
-    if epub_path == '':
-        messagebox.showinfo(title='Warning', message='File not exist')
-    elif lang == '':
-        messagebox.showinfo(title='Warning', message='Language not choosed')
-    else:
-        cc = OpenCC(lang)
-        path = get_file_name(epub_path, cc)  # grnerate temp file path
-        unzip(path, epub_path)  # Unzip epub file
-        os.chdir(path)  # Change path
-        lang_trans(path, cc)  # Translate zh_CN to zh_TW with OpenCC
-        zip(path)  # Pack epub file
-        shutil.rmtree(path)  # Delete temp files
-        messagebox.showinfo(message='Sucessful')
-
-
 class UI:
     def __init__(self):
         # main UI
@@ -109,15 +93,18 @@ class UI:
         lang_entry.grid(row=2, column=1)
         lang_entry['values'] = ['s2t', 's2tw', 't2s', 't2tw']
 
+        # progressbar
+        prog = ttk.Progressbar(self.window, length=200, mode="determinate",
+                             orient=tk.HORIZONTAL)
+        prog.grid(row=3, column=1)
+
         # convert UI
-        tk.Button(self.window, text="Convert", command=lambda: converter(
-            self.epub_path.get(), self.lang.get())).grid(row=3, column=1)
+        tk.Button(self.window, text="Convert", command=lambda: self.process(
+            self.epub_path.get(), self.lang.get(), prog)).grid(row=4, column=1)
 
         # quit UI
         tk.Button(self.window, text='Quit',
-                  command=self.quitfunc).grid(row=4, column=1)
-
-        self.window.mainloop()
+                  command=self.quitfunc).grid(row=5, column=1)
 
     # browse function
     def browsefunc(self):
@@ -126,6 +113,38 @@ class UI:
                                               filetypes=[("epub files", "*.epub")])
         self.epub_path.set(filename)
 
+    def increment(self, prog, per):
+        prog["value"] += per
+        self.window.update()
+
+    # converter function
+    def converter(self, epub_path, lang, prog):
+        cc = OpenCC(lang)
+        self.increment(prog, 5)
+        path = get_file_name(epub_path, cc)  # grnerate temp file path
+        self.increment(prog, 10)
+        unzip(path, epub_path)  # Unzip epub file
+        self.increment(prog, 10)
+        os.chdir(path)  # Change path
+        self.increment(prog, 5)
+        lang_trans(path, cc)  # Translate zh_CN to zh_TW with OpenCC
+        self.increment(prog, 30)
+        zip(path)  # Pack epub file
+        self.increment(prog, 30)
+        shutil.rmtree(path)  # Delete temp files
+        self.increment(prog, 10)
+
+    # progress function
+    def process(self, epub_path, lang, prog):
+        if epub_path == '':
+            messagebox.showinfo(title='Warning', message='File not exist')
+        elif lang == '':
+            messagebox.showinfo(
+                title='Warning', message='Language not choosed')
+        else:
+            self.converter(epub_path, lang, prog)
+            messagebox.showinfo(message='Sucessful')
+
     # quit function
     def quitfunc(self):
         self.window.destroy()
@@ -133,6 +152,7 @@ class UI:
 
 def main():
     app = UI()
+    app.window.mainloop()
 
 
 if __name__ == '__main__':
