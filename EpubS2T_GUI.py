@@ -1,7 +1,4 @@
 import os
-import sys
-import time
-import getopt
 import shutil
 import zipfile
 import tkinter as tk
@@ -14,10 +11,8 @@ from opencc.opencc import OpenCC
 def get_file_name(epub_path, cc):
     (address, file) = os.path.split(epub_path)
     (filename, ext) = os.path.splitext(file)
-    print('File address: ' + os.path.abspath(epub_path))
     filename = cc.convert(filename)
     path = os.path.abspath(os.path.join(address, filename + '_converted'))
-    print('Temp file: ' + path)
     return path
 
 
@@ -27,14 +22,9 @@ def mkdir(path):
     if not folder:
         # 如果不存在，則建立新目錄
         os.makedirs(path)
-        print('Temp File Create Successful')
-    else:
-        # 如果目錄已存在，則不建立，提示目錄已存在
-        print(path+' Temp File Existed')
 
 
 def zip(path):
-    print('Packing Epub File')
     filelist = []
     isdir = True
     if os.path.isfile(path):
@@ -58,7 +48,6 @@ def unzip(path, epub_path):
 
 
 def lang_trans(path, cc):
-    print('Processing...')
     for root, dirs, files in os.walk(path, topdown=True):
         for name in files:
             if name.endswith(".html") or name.endswith(".xhtml") \
@@ -92,8 +81,12 @@ def main():
     window.geometry('400x300')
     epub_path = tk.StringVar()
     lang = tk.StringVar()
+
+    # title UI
     header_label = tk.Label(window, text='簡繁轉換', font=('Arial', 24))
     header_label.grid(row=0, column=0)
+
+    # path choosed UI
     tk.Label(window, text='File').grid(row=1, column=0)
     entry_path = tk.Entry(window, textvariable=epub_path)
     entry_path.grid(row=1, column=1)
@@ -106,11 +99,13 @@ def main():
 
     tk.Button(window, text="Browse", command=browsefunc).grid(row=1, column=2)
 
+    # mode chose UI
     tk.Label(window, text='Mode').grid(row=2, column=0)
     lang_entry = ttk.Combobox(window, textvariable=lang)
     lang_entry.grid(row=2, column=1)
     lang_entry['values'] = ['s2t', 's2tw', 't2s', 't2tw']
 
+    # convert UI
     tk.Button(window, text="Convert", command=lambda: converter(
         epub_path.get(), lang.get())).grid(row=3, column=1)
 
