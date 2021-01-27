@@ -6,15 +6,12 @@ import shutil
 import zipfile
 import tkinter as tk
 from tkinter import filedialog
-from tkinter import ttk, messagebox
+from tkinter import ttk
+from tkinter import messagebox
 from opencc.opencc import OpenCC
 
 
 def get_file_name(epub_path, cc):
-    if epub_path == '':
-        print('File not found')
-        sys.exit()
-
     (address, file) = os.path.split(epub_path)
     (filename, ext) = os.path.splitext(file)
     print('File address: ' + os.path.abspath(epub_path))
@@ -73,27 +70,33 @@ def lang_trans(path, cc):
                     file.write(text)
 
 
-def converter(epub_path, cc):
-    path = get_file_name(epub_path, cc)  # grnerate temp file path
-    unzip(path, epub_path)  # Unzip epub file
-    os.chdir(path)  # Change path
-    lang_trans(path, cc)  # Translate zh_CN to zh_TW with OpenCC
-    zip(path)  # Pack epub file
-    shutil.rmtree(path)  # Delete temp files
-    print('Sucessful')
+def converter(epub_path, lang):
+    if epub_path == '':
+        messagebox.showinfo(title='Warning', message='File not exist')
+    elif lang == '':
+        messagebox.showinfo(title='Warnig', message='Language not choosed')
+    else:
+        cc = OpenCC(lang)
+        path = get_file_name(epub_path, cc)  # grnerate temp file path
+        unzip(path, epub_path)  # Unzip epub file
+        os.chdir(path)  # Change path
+        lang_trans(path, cc)  # Translate zh_CN to zh_TW with OpenCC
+        zip(path)  # Pack epub file
+        shutil.rmtree(path)  # Delete temp files
+        messagebox.showinfo(message='Sucessful')
 
 
 def main():
     window = tk.Tk()
     window.title('EpubS2T')
-    window.geometry('800x600')
+    window.geometry('400x300')
     epub_path = tk.StringVar()
     lang = tk.StringVar()
     header_label = tk.Label(window, text='簡繁轉換', font=('Arial', 24))
     header_label.grid(row=0, column=0)
     tk.Label(window, text='File', font=('Arial', 16)).grid(row=1, column=0)
-    entry = tk.Entry(window, textvariable=epub_path)
-    entry.grid(row=1, column=1)
+    entry_path = tk.Entry(window, textvariable=epub_path)
+    entry_path.grid(row=1, column=1)
 
     def browsefunc():
         filename = filedialog.askopenfilename(initialdir='~/',
@@ -103,25 +106,14 @@ def main():
 
     tk.Button(window, text="Browse", command=browsefunc).grid(row=1, column=2)
 
-    tk.Label(window, text='Mode:', font=('Arial', 16)).grid(row=2, column=0)
-    cb = ttk.Combobox(window, textvariable=lang)
-    cb.grid(row=2, column=1)
-    cb['values'] = ['s2t', 's2tw', 't2s']
+    tk.Label(window, text='Mode', font=('Arial', 16)).grid(row=2, column=0)
+    lang_entry = ttk.Combobox(window, textvariable=lang)
+    lang_entry.grid(row=2, column=1)
+    lang_entry['values'] = ['s2t', 's2tw', 't2s', 't2tw']
 
-    tk.Button(window, text="Convert", command=converter).grid(row=3, column=1)
+    tk.Button(window, text="Convert", command=lambda: converter(
+        epub_path.get(), lang.get())).grid(row=3, column=1)
 
-    if not epub_path:
-        print('file path is empty')
-        sys.exit()
-    '''
-    cc = OpenCC(lang)
-    print('Mode: ' + lang)
-    start = time.perf_counter()
-    converter(epub_path, cc)
-    end = time.perf_counter()
-    print(f'Time: {end - start}s')
-    sys.exit()
-    '''
     window.mainloop()
 
 
