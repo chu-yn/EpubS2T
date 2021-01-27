@@ -8,6 +8,7 @@ from tkinter import messagebox
 from opencc.opencc import OpenCC
 
 
+# return file translated name + address
 def get_file_name(epub_path, cc):
     (address, file) = os.path.split(epub_path)
     (filename, ext) = os.path.splitext(file)
@@ -16,14 +17,15 @@ def get_file_name(epub_path, cc):
     return path
 
 
+# make dir
 def mkdir(path):
-    # 判斷目錄是否存在
     folder = os.path.exists(path)
     if not folder:
-        # 如果不存在，則建立新目錄
+        # if not exist, create new dir
         os.makedirs(path)
 
 
+# zip file in epub
 def zip(path):
     filelist = []
     isdir = True
@@ -40,6 +42,7 @@ def zip(path):
             zf.write(tar, arcname)
 
 
+# unzip zipfile
 def unzip(path, epub_path):
     mkdir(path)
     os.chdir(path)
@@ -47,6 +50,7 @@ def unzip(path, epub_path):
         zf.extractall()
 
 
+# read file and translate
 def lang_trans(path, cc):
     for root, dirs, files in os.walk(path, topdown=True):
         for name in files:
@@ -95,7 +99,7 @@ class UI:
 
         # progressbar
         prog = ttk.Progressbar(self.window, length=200, mode="determinate",
-                             orient=tk.HORIZONTAL)
+                               orient=tk.HORIZONTAL)
         prog.grid(row=3, column=1)
 
         # convert UI
@@ -113,6 +117,7 @@ class UI:
                                               filetypes=[("epub files", "*.epub")])
         self.epub_path.set(filename)
 
+    # progressbar increse function
     def increment(self, prog, per):
         prog["value"] += per
         self.window.update()
@@ -122,9 +127,9 @@ class UI:
         cc = OpenCC(lang)
         self.increment(prog, 5)
         path = get_file_name(epub_path, cc)  # grnerate temp file path
-        self.increment(prog, 10)
+        self.increment(prog, 5)
         unzip(path, epub_path)  # Unzip epub file
-        self.increment(prog, 10)
+        self.increment(prog, 15)
         os.chdir(path)  # Change path
         self.increment(prog, 5)
         lang_trans(path, cc)  # Translate zh_CN to zh_TW with OpenCC
@@ -144,6 +149,7 @@ class UI:
         else:
             self.converter(epub_path, lang, prog)
             messagebox.showinfo(message='Sucessful')
+            prog["value"] = 0
 
     # quit function
     def quitfunc(self):
