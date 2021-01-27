@@ -150,6 +150,7 @@ class UI:
             self.converter(epub_path, lang, prog)
             messagebox.showinfo(message='Sucessful')
             prog["value"] = 0
+            self.window.update()
 
     # quit function
     def quitfunc(self):
