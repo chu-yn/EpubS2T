@@ -56,10 +56,10 @@ def lang_trans(path, cc):
         for name in files:
             if name.endswith(".html") or name.endswith(".xhtml") \
                     or name.endswith(".opf") or name.endswith(".ncx"):
-                with open(os.path.join(root, name), 'r+') as file:
+                with open(os.path.join(root, name), 'r+', encoding='utf-8') as file:
                     text = file.read()
                 text = cc.convert(text)
-                with open(os.path.join(root, name), 'w') as file:
+                with open(os.path.join(root, name), 'w', encoding='utf-8') as file:
                     file.write(text)
 
 
