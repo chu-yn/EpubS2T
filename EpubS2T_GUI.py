@@ -63,7 +63,7 @@ def converter(epub_path, lang):
     if epub_path == '':
         messagebox.showinfo(title='Warning', message='File not exist')
     elif lang == '':
-        messagebox.showinfo(title='Warnig', message='Language not choosed')
+        messagebox.showinfo(title='Warning', message='Language not choosed')
     else:
         cc = OpenCC(lang)
         path = get_file_name(epub_path, cc)  # grnerate temp file path
@@ -83,6 +83,14 @@ class UI:
         self.window.geometry('400x300')
         self.epub_path = tk.StringVar()
         self.lang = tk.StringVar()
+
+        # menubar UI
+        menubar = tk.Menu(self.window)
+        filemenu = tk.Menu(menubar)
+        filemenu.add_command(label='Open', command=self.browsefunc)
+        filemenu.add_command(label='Quit', command=self.quitfunc)
+        menubar.add_cascade(label='Menu', menu=filemenu)
+        self.window.config(menu=menubar)
 
         # title UI
         header_label = tk.Label(self.window, text='語言轉換', font=('Arial', 24))
@@ -106,7 +114,8 @@ class UI:
             self.epub_path.get(), self.lang.get())).grid(row=3, column=1)
 
         # quit UI
-        tk.Button(self.window, text='Quit', command=quit).grid(row=4, column=1)
+        tk.Button(self.window, text='Quit',
+                  command=self.quitfunc).grid(row=4, column=1)
 
         self.window.mainloop()
 
