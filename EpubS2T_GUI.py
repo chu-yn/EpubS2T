@@ -1,8 +1,9 @@
 import os
 import shutil
+from tkinter.constants import BOTTOM, LEFT, RIGHT, SW, TOP, X
 import zipfile
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import Frame, filedialog
 from tkinter import ttk
 from tkinter import messagebox
 from opencc.opencc import OpenCC
@@ -81,34 +82,45 @@ class UI:
         self.window.config(menu=menubar)
 
         # title UI
-        header_label = tk.Label(self.window, text='語言轉換', font=('Arial', 16))
-        header_label.grid(row=0, column=0)
+        title = tk.Frame(self.window)
+        tk.Label(title, text='語言轉換', font=('Arial', 24)).pack(ipady=5)
+        title.pack()
 
         # path choosed UI
-        tk.Label(self.window, text='File').grid(row=1, column=0)
-        entry_path = tk.Entry(self.window, textvariable=self.epub_path)
-        entry_path.grid(row=1, column=1)
-        tk.Button(self.window, text="Browse",
-                  command=self.browsefunc).grid(row=1, column=2)
+        file_choose = tk.Frame(self.window)
+        tk.Label(file_choose, text='File').pack(side=LEFT)
+        entry_path = tk.Entry(file_choose, textvariable=self.epub_path)
+        entry_path.pack(side=LEFT, ipadx=5)
+        tk.Button(file_choose, text="Browse",
+                  command=self.browsefunc).pack(side=LEFT)
+        file_choose.pack(ipady=5)
 
         # mode chose UI
-        tk.Label(self.window, text='Mode').grid(row=2, column=0)
-        lang_entry = ttk.Combobox(self.window, textvariable=self.lang)
-        lang_entry.grid(row=2, column=1)
+        mode_choose = tk.Frame(self.window)
+        tk.Label(mode_choose, text='Mode').pack(side=LEFT)
+        lang_entry = ttk.Combobox(mode_choose, textvariable=self.lang)
+        lang_entry.pack(side=LEFT)
         lang_entry['values'] = ['s2t', 's2tw', 't2s', 't2tw']
+        mode_choose.pack(ipady=5)
 
         # progressbar
-        prog = ttk.Progressbar(self.window, length=200, mode="determinate",
-                               orient=tk.HORIZONTAL)
-        prog.grid(row=3, column=1)
+        progressbar = tk.Frame(self.window)
+        prog = ttk.Progressbar(progressbar, length=250,
+                               mode="determinate", orient=tk.HORIZONTAL)
+        prog.pack()
+        progressbar.pack(ipady=5)
 
         # convert UI
-        tk.Button(self.window, text="Convert", command=lambda: self.process(
-            self.epub_path.get(), self.lang.get(), prog)).grid(row=4, column=1)
+        convert = tk.Frame(self.window)
+        tk.Button(convert, text="Convert", command=lambda: self.process(
+            self.epub_path.get(), self.lang.get(), prog)).pack()
+        convert.pack(ipady=5)
 
         # quit UI
-        tk.Button(self.window, text='Quit',
-                  command=self.quitfunc).grid(row=5, column=1)
+        quit = tk.Frame(self.window)
+        tk.Button(quit, text='Quit',
+                  command=self.quitfunc).pack()
+        quit.pack(ipady=5)
 
     # browse function
     def browsefunc(self):
