@@ -1,11 +1,11 @@
 import os
 import shutil
-from tkinter.constants import BOTTOM, LEFT, RIGHT, SW, TOP, X
 import zipfile
 import tkinter as tk
-from tkinter import Frame, filedialog
+from tkinter import filedialog
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter.constants import LEFT
 from opencc.opencc import OpenCC
 
 
